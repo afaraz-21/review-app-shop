@@ -1,6 +1,4 @@
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
-}
+require('dotenv').config();
 console.log("ENV DEBUG:", process.env.SHOPIFY_STORE);
 const express = require('express');
 const cors = require('cors');
