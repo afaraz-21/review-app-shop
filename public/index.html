@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Share Your Experience</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #F0D080;
+    --dark: #1A1410;
+    --card-bg: #FDF9F3;
+    --text: #2C2418;
+    --muted: #8A7A64;
+    --border: #E8DCC8;
+    --error: #C0392B;
+    --white: #fff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+  .container {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 48px 40px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 8px 48px rgba(90,60,10,0.12), 0 2px 8px rgba(90,60,10,0.06);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+  }
+  .header { text-align: center; margin-bottom: 36px; }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; color: var(--dark);
+    margin-bottom: 8px; font-weight: 600;
+  }
+  .header p { color: var(--muted); font-size: 14px; font-weight: 300; line-height: 1.6; }
+
+  /* Stars */
+  .stars-section { margin-bottom: 28px; text-align: center; }
+  .stars-label { font-size: 13px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+  .stars-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
+  .star-btn { background: none; border: none; cursor: pointer; padding: 4px; transition: transform 0.15s ease; line-height: 1; }
+  .star-btn:hover { transform: scale(1.15); }
+  .star-icon { width: 44px; height: 44px; fill: #E0D0B0; transition: fill 0.2s ease; }
+  .star-btn.active .star-icon, .star-btn.hovered .star-icon { fill: var(--gold); }
+  .star-hint { font-size: 13px; color: var(--muted); min-height: 18px; font-weight: 300; }
+
+  /* Form */
+  .form-group { margin-bottom: 20px; }
+  label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  input, textarea {
+    width: 100%; padding: 14px 16px;
+    border: 1.5px solid var(--border); border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px;
+    color: var(--text); background: #FFFDF9;
+    transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+  }
+  input:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+  input::placeholder, textarea::placeholder { color: #BFB09A; }
+  textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+
+  /* Submit */
+  .submit-btn {
+    width: 100%; padding: 16px;
+    background: linear-gradient(135deg, var(--gold) 0%, #B8902A 100%);
+    color: white; border: none; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+    cursor: pointer; letter-spacing: 0.5px;
+    transition: opacity 0.2s, transform 0.15s; margin-top: 8px;
+  }
+  .submit-btn:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* Result Screens */
+  .result-screen { display: none; text-align: center; padding: 20px 0; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .result-icon {
+    width: 72px; height: 72px; margin: 0 auto 24px;
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 32px;
+  }
+  .result-icon.success { background: #E8F5EC; }
+  .result-icon.redirect { background: #FFF3E0; }
+  .result-title { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--dark); margin-bottom: 10px; }
+  .result-desc { color: var(--muted); font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
+
+  /* Discount Box */
+  .discount-box {
+    background: linear-gradient(135deg, #FFF8E7, #FFF0C8);
+    border: 2px dashed var(--gold); border-radius: 14px;
+    padding: 20px 28px; margin: 20px 0;
+  }
+  .discount-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .discount-code { font-family: 'Playfair Display', serif; font-size: 30px; color: var(--gold); font-weight: 600; letter-spacing: 4px; margin-bottom: 6px; }
+  .discount-info { font-size: 13px; color: var(--muted); }
+  .copy-btn {
+    background: var(--gold); color: white; border: none;
+    padding: 10px 24px; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; margin-top: 14px; transition: opacity 0.2s; letter-spacing: 0.5px;
+  }
+  .copy-btn:hover { opacity: 0.88; }
+
+  /* Amazon Button */
+  .amazon-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #FF9500 0%, #E07B00 100%);
+    color: white; text-decoration: none;
+    padding: 14px 32px; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
+    letter-spacing: 0.5px; transition: opacity 0.2s, transform 0.15s;
+  }
+  .amazon-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  /* Error & Spinner */
+  .error-msg {
+    background: #FEF0EE; border: 1px solid #F5C0B8; color: var(--error);
+    padding: 12px 16px; border-radius: 8px; font-size: 13px;
+    margin-top: 12px; display: none;
+  }
+  .loading-spinner {
+    display: inline-block; width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    margin-right: 8px; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Loading dots for discount creation */
+  .creating-msg { color: var(--muted); font-size: 13px; margin-top: 8px; display: none; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  th { background-color: #f4f4f4; }
+  tr:nth-child(even) { background-color: #fafafa; }
+  a { display: inline-block; margin-top: 10px; text-decoration: none; color: #007bff; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ── Form Screen ─────────────────────────────── -->
+  <div id="form-screen">
+    <div class="header">
+      <h1>Share Your Experience</h1>
+      <p>We'd love to hear your honest feedback.<br>Your review means the world to us.</p>
+    </div>
+
+    <div class="stars-section">
+      <div class="stars-label">Your Rating</div>
+      <div class="stars-row">
+        <button class="star-btn" onclick="selectStar(1)" onmouseover="hoverStar(1)" onmouseout="unhoverStar()">
+          <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+        </button>
+        <button class="star-btn" onclick="selectStar(2)" onmouseover="hoverStar(2)" onmouseout="unhoverStar()">
+          <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+        </button>
+        <button class="star-btn" onclick="selectStar(3)" onmouseover="hoverStar(3)" onmouseout="unhoverStar()">
+          <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+        </button>
+        <button class="star-btn" onclick="selectStar(4)" onmouseover="hoverStar(4)" onmouseout="unhoverStar()">
+          <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+        </button>
+        <button class="star-btn" onclick="selectStar(5)" onmouseover="hoverStar(5)" onmouseout="unhoverStar()">
+          <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+        </button>
+      </div>
+      <div class="star-hint" id="star-hint">Tap a star to rate</div>
+    </div>
+
+    <div class="form-group">
+      <label>Your Name</label>
+      <input type="text" id="inp-name" placeholder="e.g. John Doe" />
+    </div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" id="inp-email" placeholder="user@example.com" />
+    </div>
+    <div class="form-group">
+      <label>Phone Number</label>
+      <input type="tel" id="inp-phone" placeholder="123-456-7890" />
+    </div>
+    <div class="form-group">
+      <label>Order Number</label>
+      <input type="text" id="inp-order" placeholder="e.g. 123-1234567-1234567" />
+    </div>
+    <div class="form-group">
+      <label>Your Review</label>
+      <textarea id="inp-review" placeholder="Tell us about your experience with our product..."></textarea>
+    </div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitReview()">Submit Review</button>
+    <div class="creating-msg" id="creating-msg">⏳ Your discount code is being generated…</div>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+
+  <!-- ── Discount Screen (3 stars) ──────────────── -->
+  <div class="result-screen" id="discount-screen">
+    <div class="result-icon success">🎁</div>
+    <div class="result-title">Thank You!</div>
+    <div class="result-desc">We truly appreciate your feedback.<br>Here's an exclusive discount just for you:</div>
+    <div class="discount-box">
+      <div class="discount-label">Your Discount Code</div>
+      <div class="discount-code" id="discount-code-display">—</div>
+      <div class="discount-info">10% OFF &mdash; One time use only &middot; Valid 30 days</div>
+      <!-- <button class="copy-btn" onclick="copyCode()">Copy Code</button> -->
+    </div>
+    <div class="result-desc" style="margin-top:16px;font-size:13px;">
+      Apply this code at checkout.<br>Valid for your next order.
+    </div>
+  </div>
+
+  <!-- ── Amazon Screen (4-5 stars) ─────────────── -->
+  <div class="result-screen" id="amazon-screen">
+    <div class="result-icon redirect">⭐</div>
+    <div class="result-title">You're Amazing!</div>
+    <div class="result-desc">
+      We're so glad you loved your experience!<br>
+      Would you mind sharing your review on Amazon too?<br>
+      It helps us reach more customers like you.
+    </div>
+    <a class="amazon-btn" id="amazon-link" href="#" target="_blank">
+      ✍️ Write Amazon Review
+    </a>
+    <div class="result-desc" style="margin-top:20px;font-size:12px;">
+      Opens in a new tab — takes less than 2 minutes!
+    </div>
+  </div>
+
+  <!-- ── Low Rating Screen (1-2 stars) ─────────── -->
+  <div class="result-screen" id="low-screen">
+    <div class="result-icon success">🙏</div>
+    <div class="result-title">Thank You!</div>
+    <div class="result-desc">
+      We appreciate your honest feedback.<br>
+      We'll work hard to improve your experience.
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Amazon URL (server se match karo) ─────────────────────────────────────
+  // Ye URL aapka Amazon review page hai — server ki .env se match karna chahiye
+  const AMAZON_URL = 'https://www.amazon.com/review/create-review?asin=XXXXXXXXXX';
+
+  // ── Stars Logic ────────────────────────────────────────────────────────────
+  let selectedStar = 0;
+  const hints = ['','Poor experience','Below average','Good — but could be better!','Great experience!','Excellent — loved it!'];
+
+  function hoverStar(val) {
+    document.querySelectorAll('.star-btn').forEach((b, i) => b.classList.toggle('hovered', i < val));
+    document.getElementById('star-hint').textContent = hints[val];
+  }
+  function unhoverStar() {
+    document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('hovered'));
+    document.getElementById('star-hint').textContent = selectedStar ? hints[selectedStar] : 'Tap a star to rate';
+  }
+  function selectStar(val) {
+    selectedStar = val;
+    document.querySelectorAll('.star-btn').forEach((b, i) => b.classList.toggle('active', i < val));
+    document.getElementById('star-hint').textContent = hints[val];
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg; el.style.display = 'block';
+  }
+  function hideError() { document.getElementById('error-msg').style.display = 'none'; }
+
+  function showScreen(id) {
+    document.getElementById('form-screen').style.display = 'none';
+    document.getElementById(id).style.display = 'block';
+  }
+
+  function copyCode() {
+  const codeEl = document.getElementById('discount-code-display');
+  const code = codeEl.textContent.trim();
+
+  if (!code || code === '—') {
+    alert('No discount code to copy yet!');
+    return;
+  }
+
+  navigator.clipboard.writeText(code)
+    .then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.textContent = 'Copy Code'; }, 2000);
+    })
+    .catch(err => {
+      console.error('Copy failed:', err);
+      alert('Failed to copy code. Try manually.');
+    });
+}
+
+  // ── Main Submit ────────────────────────────────────────────────────────────
+  async function submitReview() {
+    hideError();
+    const name   = document.getElementById('inp-name').value.trim();
+    const email  = document.getElementById('inp-email').value.trim();
+    const phone  = document.getElementById('inp-phone').value.trim();
+    const review = document.getElementById('inp-review').value.trim();
+    const order = document.getElementById('inp-order').value.trim();
+    if (!/^\d{3}-\d{7}-\d{7}$|^\d{10,20}$/.test(order)) {
+      return showError('Please enter a valid Amazon order number (e.g. 123-1234567-1234567)');
+    }
+
+    if (!name)   return showError('Please enter your name.');
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showError('Please enter a valid email address.');
+    if (!phone)  return showError('Please enter your phone number.');
+    if (!selectedStar) return showError('Please select a star rating.');
+    if (!review) return showError('Please write a short review.');
+    if (!order) return showError('Please enter your order number.');
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="loading-spinner"></span>Submitting...';
+
+    // ── 4 or 5 stars → Amazon redirect (no API needed) ─────────────────────
+    if (selectedStar >= 4) {
+      document.getElementById('amazon-link').href = AMAZON_URL;
+      showScreen('amazon-screen');
+      setTimeout(() => window.open(AMAZON_URL, '_blank'), 1500);
+      return;
+    }
+
+    // ── 3 stars → Call backend to create Shopify discount ─────────────────
+    document.getElementById('creating-msg').style.display = 'block';
+
+    try {
+      const res = await fetch('/api/create-discount', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone, order, review, stars: selectedStar })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Server error');
+      }
+
+      // Show the generated discount code
+      document.getElementById('discount-code-display').textContent = data.code;
+
+// 🔊 Play sound
+const sound = document.getElementById('success-sound');
+if (sound) {
+  sound.currentTime = 0;
+  sound.play().catch(() => {
+    console.log("Autoplay blocked (user interaction required)");
+  });
+}
+
+showScreen('discount-screen');
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Submit Review';
+      document.getElementById('creating-msg').style.display = 'none';
+      showError('❌ ' + (err.message || 'Something went wrong. Please try again.'));
+    }
+  }
+</script>
+<audio id="success-sound" src="sound.mp3" preload="auto"></audio>
+</body>
+</html>
