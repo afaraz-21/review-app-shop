@@ -13,15 +13,15 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ─── GOOGLE SHEETS SETUP ──────────────────────────
-const sheetsCredentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDS);
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-const SHEET_NAME = 'Sheet1'; // tab name
+// const sheetsCredentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDS);
+// const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
+// const SHEET_NAME = 'Sheet1'; // tab name
 
-const auth = new google.auth.GoogleAuth({
-  credentials: sheetsCredentials,
-  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-});
-const sheets = google.sheets({ version: 'v4', auth });
+// const auth = new google.auth.GoogleAuth({
+//   credentials: sheetsCredentials,
+//   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+// });
+// const sheets = google.sheets({ version: 'v4', auth });
 
 // ─── ENV CONFIG ─────────────────────────────────────
 const SHOPIFY_STORE = process.env.SHOPIFY_STORE;
