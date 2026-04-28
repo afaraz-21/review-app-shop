@@ -1,3 +1,7 @@
+console.log("ENV CHECK:", {
+  SHOPIFY_STORE: process.env.SHOPIFY_STORE,
+  SHOPIFY_TOKEN: process.env.SHOPIFY_TOKEN ? "SET" : "NOT SET"
+});
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
