@@ -27,7 +27,6 @@ try {
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const SHEET_NAME = 'Sheet1'; // tab name
 
-const { google } = require('googleapis');
 
 const sheetsCredentials = JSON.parse(
   Buffer.from(process.env.GOOGLE_SHEETS_CREDS_BASE64, 'base64').toString()
