@@ -14,7 +14,13 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ─── GOOGLE SHEETS SETUP ──────────────────────────
-const sheetsCredentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDS);
+let sheetsCredentials;
+try {
+  sheetsCredentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDS);
+  console.log("Google creds loaded");
+} catch (err) {
+  console.error("Google creds error:", err);
+}
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const SHEET_NAME = 'Sheet1'; // tab name
 
