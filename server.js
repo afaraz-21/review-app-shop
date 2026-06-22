@@ -163,14 +163,14 @@ app.post('/api/create-discount', async (req, res) => {
     // 6️⃣ Save data
     saveEmail(email, code, name, order);
 
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A:E`,
-      valueInputOption: 'RAW',
-      requestBody: {
-        values: [[name, email, order, code, new Date().toISOString()]]
-      },
-    });
+    // await sheets.spreadsheets.values.append({
+    //   spreadsheetId: SPREADSHEET_ID,
+    //   range: `${SHEET_NAME}!A:E`,
+    //   valueInputOption: 'RAW',
+    //   requestBody: {
+    //     values: [[name, email, order, code, new Date().toISOString()]]
+    //   },
+    // });
 
     return res.json({
       success: true,
