@@ -30,7 +30,7 @@ const SHOPIFY_TOKEN = process.env.SHOPIFY_TOKEN;
 let PRICE_RULE_ID = process.env.PRICE_RULE_ID || null;
 const DISCOUNT_PERCENT = parseInt(process.env.DISCOUNT_PERCENT || '10');
 const CODE_PREFIX = process.env.CODE_PREFIX || 'THANKS';
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 // ─── EMAIL DB (FILE BASED) ─────────────────────────
 const EMAIL_DB = './emails.json';
