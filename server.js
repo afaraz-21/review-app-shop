@@ -27,10 +27,19 @@ try {
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const SHEET_NAME = 'Sheet1'; // tab name
 
-const auth = new google.auth.GoogleAuth({
-  credentials: sheetsCredentials,
-  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-});
+const { google } = require('googleapis');
+
+const sheetsCredentials = JSON.parse(
+  Buffer.from(process.env.GOOGLE_SHEETS_CREDS_BASE64, 'base64').toString()
+);
+
+const auth = new google.auth.JWT(
+  sheetsCredentials.client_email,
+  null,
+  sheetsCredentials.private_key.replace(/\\n/g, '\n'),
+  ['https://www.googleapis.com/auth/spreadsheets']
+);
+
 const sheets = google.sheets({ version: 'v4', auth });
 
 // ─── ENV CONFIG ─────────────────────────────────────
