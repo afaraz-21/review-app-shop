@@ -30,6 +30,8 @@ try {
   }
 
   console.log("✅ Google creds loaded successfully");
+  console.log("Sheets Creds Loaded:", !!sheetsCredentials);
+  console.log("Client Email:", sheetsCredentials?.client_email);
 } catch (err) {
   console.error("❌ Google creds problem:", err.message);
   console.error("ENV Value:", process.env.GOOGLE_SHEETS_CREDS);
