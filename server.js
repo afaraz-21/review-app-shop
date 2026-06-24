@@ -1,5 +1,7 @@
 require('dotenv').config();
 console.log("ENV DEBUG:", process.env.SHOPIFY_STORE);
+console.log("GOOGLE_SHEETS_CREDS exists:", !!process.env.GOOGLE_SHEETS_CREDS);
+console.log("SPREADSHEET_ID:", process.env.SPREADSHEET_ID);
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
