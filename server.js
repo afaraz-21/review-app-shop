@@ -14,28 +14,39 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ─── GOOGLE SHEETS SETUP ──────────────────────────
-// let sheetsCredentials = null;
+let sheetsCredentials = null;
 
-// try {
-//   if (!process.env.GOOGLE_SHEETS_CREDS) {
-//     throw new Error("ENV missing");
-//   }
+try {
+  if (!process.env.GOOGLE_SHEETS_CREDS) {
+    throw new Error("GOOGLE_SHEETS_CREDS ENV missing");
+  }
 
-//   sheetsCredentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDS);
+  sheetsCredentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDS);
 
-//   console.log("✅ Google creds loaded successfully");
-// } catch (err) {
-//   console.error("❌ Google creds problem:", err.message);
-// }
-// const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
-// const SHEET_NAME = 'Sheet1'; // tab name
+  // Fix private key formatting for hosting providers
+  if (sheetsCredentials.private_key) {
+    sheetsCredentials.private_key =
+      sheetsCredentials.private_key.replace(/\\n/g, '\n');
+  }
 
+  console.log("✅ Google creds loaded successfully");
+} catch (err) {
+  console.error("❌ Google creds problem:", err.message);
+  console.error("ENV Value:", process.env.GOOGLE_SHEETS_CREDS);
+}
 
-// const auth = new google.auth.GoogleAuth({
-//   credentials: sheetsCredentials,
-//   scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-// });
-// const sheets = google.sheets({ version: 'v4', auth });
+const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
+const SHEET_NAME = 'Sheet1';
+
+const auth = new google.auth.GoogleAuth({
+  credentials: sheetsCredentials,
+  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+});
+
+const sheets = google.sheets({
+  version: 'v4',
+  auth,
+});
 
 // ─── ENV CONFIG ─────────────────────────────────────
 const SHOPIFY_STORE = process.env.SHOPIFY_STORE;
@@ -163,14 +174,14 @@ app.post('/api/create-discount', async (req, res) => {
     // 6️⃣ Save data
     saveEmail(email, code, name, order);
 
-    // await sheets.spreadsheets.values.append({
-    //   spreadsheetId: SPREADSHEET_ID,
-    //   range: `${SHEET_NAME}!A:E`,
-    //   valueInputOption: 'RAW',
-    //   requestBody: {
-    //     values: [[name, email, order, code, new Date().toISOString()]]
-    //   },
-    // });
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${SHEET_NAME}!A:E`,
+      valueInputOption: 'RAW',
+      requestBody: {
+        values: [[name, email, order, code, new Date().toISOString()]]
+      },
+    });
 
     return res.json({
       success: true,
