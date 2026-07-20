@@ -223,19 +223,32 @@ app.get('/admin/emails', (req, res) => {
   res.send(html);
 });
 
-app.get('/test-sheet', async (req,res)=>{
-  await sheets.spreadsheets.values.append({
-    spreadsheetId: process.env.SPREADSHEET_ID,
-    range:'Sheet1!A:E',
-    valueInputOption:'RAW',
-    requestBody:{
-      values:[
-        ['Test','test@gmail.com','123','CODE123',new Date()]
-      ]
-    }
-  });
+app.get('/test-sheet', async (req, res) => {
+  try {
 
-  res.send('Sheet Updated');
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: process.env.SPREADSHEET_ID,
+      range: 'Sheet1!A:E',
+      valueInputOption: 'RAW',
+      requestBody: {
+        values: [
+          [
+            'Test',
+            'test@gmail.com',
+            '123',
+            'CODE123',
+            new Date().toISOString()
+          ]
+        ]
+      }
+    });
+
+    res.send('Sheet Updated');
+
+  } catch (error) {
+    console.error("SHEET ERROR:", error);
+    res.status(500).send(error.message);
+  }
 });
 
 async function verifyShopifyOrder(orderNumber) {
