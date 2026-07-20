@@ -245,10 +245,10 @@ app.get('/test-sheet', async (req, res) => {
       }
     });
 
-    res.send('Sheet Updated');
+    res.send('Sheet Updated Successfully');
 
   } catch (error) {
-    console.error("SHEET ERROR:", error);
+    console.log("SHEET ERROR:", error);
     res.status(500).send(error.message);
   }
 });
