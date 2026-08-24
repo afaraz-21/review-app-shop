@@ -43,11 +43,12 @@ const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const SHEET_NAME = 'Sheet1';
 
 const auth = new google.auth.GoogleAuth({
-  credentials: sheetsCredentials,
+  keyFile: './google-creds.json',
   scopes: [
     'https://www.googleapis.com/auth/spreadsheets'
   ],
 });
+
 const sheets = google.sheets({
   version: 'v4',
   auth
