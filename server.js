@@ -69,16 +69,28 @@ function getEmails() {
   return JSON.parse(fs.readFileSync(EMAIL_DB));
 }
 
-function saveEmail(email, code, name, order) {
+function saveEmail(
+  email,
+  code,
+  name,
+  platform,
+  order
+) {
   const emails = getEmails();
+
   emails.push({
     name,
     email,
+    platform,
     order,
     code,
     date: new Date().toISOString()
   });
-  fs.writeFileSync(EMAIL_DB, JSON.stringify(emails, null, 2));
+
+  fs.writeFileSync(
+    EMAIL_DB,
+    JSON.stringify(emails, null, 2)
+  );
 }
 
 // ─── Generate random code ───────────────────────────
@@ -148,12 +160,43 @@ async function createShopifyDiscount(code) {
 
 // ─── API: CREATE DISCOUNT ──────────────────────────
 app.post('/api/create-discount', async (req, res) => {
-  const { name, email, phone, order, review, stars } = req.body;
+  const { name, email, phone, platform, order, review, stars } = req.body;
 
   // 1️⃣ Basic validation
-  if (!name || !email || !phone || !order || !review || !stars) {
+  if (!name || !email || !phone || !platform || !order || !review || !stars) {
     return res.status(400).json({ error: 'All fields required' });
   }
+
+  if (!['amazon', 'shopify'].includes(platform)) {
+  return res.status(400).json({
+    error: 'Invalid platform'
+  });
+}
+
+  // Amazon order validation
+if (platform === 'amazon') {
+
+  const amazonOrderRegex =
+    /^\d{3}-\d{7}-\d{7}$|^\d{10,20}$/;
+
+  if (!amazonOrderRegex.test(order)) {
+    return res.status(400).json({
+      error: 'Invalid Amazon order number'
+    });
+  }
+}
+
+// Shopify order validation
+if (platform === 'shopify') {
+
+  const shopifyOrderRegex = /^#?\d{1,10}$/;
+
+  if (!shopifyOrderRegex.test(order)) {
+    return res.status(400).json({
+      error: 'Invalid Shopify order number'
+    });
+  }
+}
 
   if (stars > 3) {
     return res.status(400).json({ error: 'Only for 3-star rating' });
@@ -167,9 +210,17 @@ app.post('/api/create-discount', async (req, res) => {
   }
 
   // 3️⃣ Order duplicate check
-  if (emails.find(e => e.order === order)) {
-    return res.status(400).json({ error: 'This order has already been used for a discount!' });
-  }
+  if (
+  emails.find(
+    e =>
+      e.order === order &&
+      e.platform === platform
+  )
+) {
+  return res.status(400).json({
+    error: 'This order has already been used for a discount!'
+  });
+}
 
   try {
 
@@ -182,11 +233,19 @@ app.post('/api/create-discount', async (req, res) => {
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A:E`,
-      valueInputOption: 'RAW',
-      requestBody: {
-        values: [[name, email, order, code, new Date().toISOString()]]
-      },
+      range: `${SHEET_NAME}!A:F`,
+valueInputOption: 'RAW',
+
+requestBody: {
+  values: [[
+    name,
+    email,
+    platform,
+    order,
+    code,
+    new Date().toISOString()
+  ]]
+},
     });
 
     return res.json({
