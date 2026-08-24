@@ -68,14 +68,14 @@
   /* Form */
   .form-group { margin-bottom: 20px; }
   label { display: block; font-size: 12px; font-weight: 500; color: #fff; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
-  input, textarea {
+  input, textarea, select {
     width: 100%; padding: 14px 16px;
     border: 1.5px solid var(--border); border-radius: 10px;
     font-family: 'DM Sans', sans-serif; font-size: 15px;
     color: var(--text); background: #FFFDF9;
     transition: border-color 0.2s, box-shadow 0.2s; outline: none;
   }
-  input:focus, textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+  input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
   input::placeholder, textarea::placeholder { color: #BFB09A; }
   textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
 
@@ -201,9 +201,22 @@
       <input type="tel" id="inp-phone" placeholder="123-456-7890" />
     </div>
     <div class="form-group">
-      <label>Order Number</label>
-      <input type="text" id="inp-order" placeholder="e.g. 123-1234567-1234567" />
-    </div>
+  <label>Platform</label>
+  <select id="inp-platform" onchange="updateOrderField()">
+    <option value="">Select Platform</option>
+    <option value="amazon">Amazon</option>
+    <option value="shopify">Shopify</option>
+  </select>
+</div>
+
+<div class="form-group">
+  <label>Order Number</label>
+  <input 
+    type="text" 
+    id="inp-order" 
+    placeholder="Select a platform first" 
+  />
+</div>
     <div class="form-group">
       <label>Your Review</label>
       <textarea id="inp-review" placeholder="Tell us about your experience with our product..."></textarea>
@@ -316,73 +329,164 @@
 }
 
   // ── Main Submit ────────────────────────────────────────────────────────────
-  async function submitReview() {
-    hideError();
-    const name   = document.getElementById('inp-name').value.trim();
-    const email  = document.getElementById('inp-email').value.trim();
-    const phone  = document.getElementById('inp-phone').value.trim();
-    const review = document.getElementById('inp-review').value.trim();
-    const order = document.getElementById('inp-order').value.trim();
-    if (!/^\d{3}-\d{7}-\d{7}$|^\d{10,20}$/.test(order)) {
-      return showError('Please enter a valid Amazon order number (e.g. 123-1234567-1234567)');
-    }
+ async function submitReview() {
+  hideError();
 
-    if (!name)   return showError('Please enter your name.');
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showError('Please enter a valid email address.');
-    if (!phone)  return showError('Please enter your phone number.');
-    if (!selectedStar) return showError('Please select a star rating.');
-    if (!review) return showError('Please write a short review.');
-    if (!order) return showError('Please enter your order number.');
+  const name = document.getElementById('inp-name').value.trim();
+  const email = document.getElementById('inp-email').value.trim();
+  const phone = document.getElementById('inp-phone').value.trim();
+  const review = document.getElementById('inp-review').value.trim();
 
-    const btn = document.getElementById('submit-btn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="loading-spinner"></span>Submitting...';
+  const platform = document.getElementById('inp-platform').value;
+  const order = document.getElementById('inp-order').value.trim();
 
-    // ── 4 or 5 stars → Amazon redirect (no API needed) ─────────────────────
-    if (selectedStar >= 4) {
-      document.getElementById('amazon-link').href = AMAZON_URL;
-      showScreen('amazon-screen');
-      setTimeout(() => window.open(AMAZON_URL, '_blank'), 1500);
-      return;
-    }
+  if (!platform) {
+    return showError('Please select a platform.');
+  }
 
-    // ── 3 stars → Call backend to create Shopify discount ─────────────────
-    document.getElementById('creating-msg').style.display = 'block';
+  if (!order) {
+    return showError('Please enter your order number.');
+  }
 
-    try {
-      const res = await fetch('/api/create-discount', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, phone, order, review, stars: selectedStar })
-      });
+  // Amazon order validation
+  if (platform === 'amazon') {
 
-      const data = await res.json();
+    const amazonOrderRegex = /^\d{3}-\d{7}-\d{7}$|^\d{10,20}$/;
 
-      if (!res.ok) {
-        throw new Error(data.error || 'Server error');
-      }
-
-      // Show the generated discount code
-      document.getElementById('discount-code-display').textContent = data.code;
-
-// 🔊 Play sound
-const sound = document.getElementById('success-sound');
-if (sound) {
-  sound.currentTime = 0;
-  sound.play().catch(() => {
-    console.log("Autoplay blocked (user interaction required)");
-  });
-}
-
-showScreen('discount-screen');
-
-    } catch (err) {
-      btn.disabled = false;
-      btn.textContent = 'Submit Review';
-      document.getElementById('creating-msg').style.display = 'none';
-      showError('❌ ' + (err.message || 'Something went wrong. Please try again.'));
+    if (!amazonOrderRegex.test(order)) {
+      return showError(
+        'Please enter a valid Amazon order number (e.g. 123-1234567-1234567)'
+      );
     }
   }
+
+  // Shopify order validation
+  if (platform === 'shopify') {
+
+    const shopifyOrderRegex = /^#?\d{1,10}$/;
+
+    if (!shopifyOrderRegex.test(order)) {
+      return showError(
+        'Please enter a valid Shopify order number (e.g. #1001 or 1001)'
+      );
+    }
+  }
+
+  if (!name) {
+    return showError('Please enter your name.');
+  }
+
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return showError('Please enter a valid email address.');
+  }
+
+  if (!phone) {
+    return showError('Please enter your phone number.');
+  }
+
+  if (!selectedStar) {
+    return showError('Please select a star rating.');
+  }
+
+  if (!review) {
+    return showError('Please write a short review.');
+  }
+
+  const btn = document.getElementById('submit-btn');
+
+  btn.disabled = true;
+  btn.innerHTML =
+    '<span class="loading-spinner"></span>Submitting...';
+
+  if (selectedStar >= 4) {
+    document.getElementById('amazon-link').href = AMAZON_URL;
+
+    showScreen('amazon-screen');
+
+    setTimeout(() => {
+      window.open(AMAZON_URL, '_blank');
+    }, 1500);
+
+    return;
+  }
+
+  document.getElementById('creating-msg').style.display = 'block';
+
+  try {
+
+    const res = await fetch('/api/create-discount', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+
+      body: JSON.stringify({
+        name,
+        email,
+        phone,
+        platform,
+        order,
+        review,
+        stars: selectedStar
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Server error');
+    }
+
+    document.getElementById(
+      'discount-code-display'
+    ).textContent = data.code;
+
+    const sound = document.getElementById('success-sound');
+
+    if (sound) {
+      sound.currentTime = 0;
+
+      sound.play().catch(() => {
+        console.log(
+          "Autoplay blocked (user interaction required)"
+        );
+      });
+    }
+
+    showScreen('discount-screen');
+
+  } catch (err) {
+
+    btn.disabled = false;
+    btn.textContent = 'Submit Review';
+
+    document.getElementById(
+      'creating-msg'
+    ).style.display = 'none';
+
+    showError(
+      '❌ ' +
+      (err.message ||
+        'Something went wrong. Please try again.')
+    );
+  }
+}
+  function updateOrderField() {
+  const platform = document.getElementById('inp-platform').value;
+  const orderInput = document.getElementById('inp-order');
+
+  orderInput.value = '';
+
+  if (platform === 'amazon') {
+    orderInput.placeholder = 'e.g. 123-1234567-1234567';
+  } 
+  else if (platform === 'shopify') {
+    orderInput.placeholder = 'e.g. #1001 or 1001';
+  } 
+  else {
+    orderInput.placeholder = 'Select a platform first';
+  }
+}
 </script>
 <audio id="success-sound" src="sound.mp3" preload="auto"></audio>
 </body>
