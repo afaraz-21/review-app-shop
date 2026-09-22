@@ -3,491 +3,975 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Share Your Experience</title>
+<title>Help Us Improve</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">  
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
-  :root {
-    --gold: #C9A84C;
-    --gold-light: #F0D080;
-    --dark: #1A1410;
-    --card-bg: #FDF9F3;
-    --text: #2C2418;
-    --muted: #8A7A64;
-    --border: #E8DCC8;
-    --error: #C0392B;
-    --white: #fff;
+:root {
+  --lime: #c3eb3a;
+  --dark: #363636;
+  --dark-2: #242424;
+  --white: #ffffff;
+  --muted: #bdbdbd;
+  --border: #e7e7e7;
+  --error: #c0392b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #fff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Abstract theme-matching background */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+body::before {
+  width: 420px;
+  height: 420px;
+  top: -180px;
+  left: -180px;
+  background: radial-gradient(
+    circle,
+    rgba(195,235,58,.22) 0%,
+    rgba(195,235,58,.07) 42%,
+    transparent 70%
+  );
+}
+
+body::after {
+  width: 520px;
+  height: 520px;
+  right: -250px;
+  bottom: -250px;
+  background: radial-gradient(
+    circle,
+    rgba(54,54,54,.10) 0%,
+    rgba(54,54,54,.035) 45%,
+    transparent 72%
+  );
+}
+
+.container {
+  background: var(--dark);
+  border-radius: 20px;
+  padding: 48px 40px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow:
+    0 20px 70px rgba(0,0,0,.15),
+    0 4px 12px rgba(0,0,0,.08);
+  border: 1px solid var(--lime);
+  position: relative;
+  overflow: hidden;
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--lime);
+}
+
+.container::after {
+  content: '';
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  right: -90px;
+  top: -90px;
+  border: 1px solid rgba(195,235,58,.25);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 25px rgba(195,235,58,.03),
+    0 0 0 50px rgba(195,235,58,.02);
+  pointer-events: none;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.header h1 {
+  font-family: "Bai Jamjuree", sans-serif;
+  font-size: 32px;
+  color: var(--lime);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.header p {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+/* Stars */
+.stars-section {
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.stars-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--lime);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+
+.stars-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  transition: transform .15s ease;
+  line-height: 1;
+}
+
+.star-btn:hover {
+  transform: scale(1.15);
+}
+
+.star-icon {
+  width: 44px;
+  height: 44px;
+  fill: #ffffff;
+  transition: fill .2s ease;
+}
+
+.star-btn.active .star-icon,
+.star-btn.hovered .star-icon {
+  fill: var(--lime);
+}
+
+.star-hint {
+  font-size: 13px;
+  color: #fff;
+  min-height: 18px;
+  font-weight: 300;
+}
+
+/* Form */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: 8px;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: #2c2c2c;
+  background: #fff;
+  transition: border-color .2s, box-shadow .2s;
+  outline: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--lime);
+  box-shadow: 0 0 0 3px rgba(195,235,58,.15);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #aaa;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.6;
+}
+
+/* Submit */
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--lime);
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: .5px;
+  transition: opacity .2s, transform .15s;
+  margin-top: 8px;
+}
+
+.submit-btn:hover:not(:disabled) {
+  opacity: .92;
+  transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Result Screens */
+.result-screen {
+  display: none;
+  text-align: center;
+  padding: 20px 0;
+  animation: fadeIn .4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--white);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px 16px;
+  to {
+    opacity: 1;
+    transform: none;
   }
+}
+
+.result-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+
+.result-icon.success {
+  background: #e8f5ec;
+}
+
+.result-icon.redirect {
+  background: #f2f7dd;
+}
+
+.result-title {
+  font-family: "Bai Jamjuree", sans-serif;
+  font-size: 30px;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.result-desc {
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.75;
+  margin-bottom: 24px;
+}
+
+.discount-box {
+  background: var(--lime);
+  border: 2px dashed #a5cb20;
+  border-radius: 14px;
+  padding: 20px 28px;
+  margin: 20px 0;
+}
+
+.discount-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #363636;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.discount-code {
+  font-family: "Bai Jamjuree", sans-serif;
+  font-size: 30px;
+  color: #000;
+  font-weight: 600;
+  letter-spacing: 4px;
+  margin-bottom: 6px;
+  word-break: break-word;
+}
+
+.discount-info {
+  font-size: 13px;
+  color: #363636;
+}
+
+.review-btn {
+  display: inline-block;
+  background: var(--lime);
+  color: #000;
+  text-decoration: none;
+  padding: 14px 32px;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  transition: opacity .2s, transform .15s;
+}
+
+.review-btn:hover {
+  opacity: .9;
+  transform: translateY(-1px);
+}
+
+/* Timer */
+.timer-wrap {
+  margin: 24px 0 18px;
+  text-align: center;
+}
+
+.timer-circle {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  border: 4px solid rgba(255,255,255,.18);
+  border-top-color: var(--lime);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Bai Jamjuree", sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--lime);
+  animation: timerSpin 1s linear infinite;
+}
+
+@keyframes timerSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.timer-number {
+  transform: rotate(0deg);
+}
+
+.timer-text {
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.error-msg {
+  background: #fef0ee;
+  border: 1px solid #f5c0b8;
+  color: var(--error);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-top: 12px;
+  display: none;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.creating-msg {
+  color: #d8d8d8;
+  font-size: 13px;
+  margin-top: 8px;
+  display: none;
+}
+
+@media (max-width: 560px) {
   .container {
-    background: #363636;
-    border-radius: 20px;
-    padding: 48px 40px;
-    max-width: 520px;
-    width: 100%;
-    box-shadow: 0 8px 48px rgba(90,60,10,0.12), 0 2px 8px rgba(90,60,10,0.06);
-    border: 1px solid #c3eb3a;
-    position: relative;
-    overflow: hidden;
+    padding: 38px 22px;
   }
-  .container::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
-    background: #c3eb3a;
-  }
-  .header { text-align: center; margin-bottom: 36px; }
+
   .header h1 {
-    font-family: "Bai Jamjuree", sans-serif;
-    font-size: 32px; color: #c3eb3a;
-    margin-bottom: 8px; font-weight: 600;
+    font-size: 28px;
   }
-  .header p { color: #fff; font-size: 14px; font-weight: 300; line-height: 1.6; }
 
-  /* Stars */
-  .stars-section { margin-bottom: 28px; text-align: center; }
-  .stars-label { font-size: 13px; font-weight: 500; color: #c3eb3a; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
-  .stars-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
-  .star-btn { background: none; border: none; cursor: pointer; padding: 4px; transition: transform 0.15s ease; line-height: 1; }
-  .star-btn:hover { transform: scale(1.15); }
-  .star-icon { width: 44px; height: 44px; fill: #ffffffe0; transition: fill 0.2s ease; }
-  .star-btn.active .star-icon, .star-btn.hovered .star-icon { fill: #c3eb3a; }
-  .star-hint { font-size: 13px; color: #fff; min-height: 18px; font-weight: 300; }
-
-  /* Form */
-  .form-group { margin-bottom: 20px; }
-  label { display: block; font-size: 12px; font-weight: 500; color: #fff; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
-  input, textarea, select {
-    width: 100%; padding: 14px 16px;
-    border: 1.5px solid var(--border); border-radius: 10px;
-    font-family: 'DM Sans', sans-serif; font-size: 15px;
-    color: var(--text); background: #FFFDF9;
-    transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+  .star-icon {
+    width: 38px;
+    height: 38px;
   }
-  input:focus, textarea:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
-  input::placeholder, textarea::placeholder { color: #BFB09A; }
-  textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
-
-  /* Submit */
-  .submit-btn {
-    width: 100%; padding: 16px;
-    background: #c3eb3a;
-    color: #000; border: none; border-radius: 10px;
-    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
-    cursor: pointer; letter-spacing: 0.5px;
-    transition: opacity 0.2s, transform 0.15s; margin-top: 8px;
-  }
-  .submit-btn:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
-  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-  /* Result Screens */
-  .result-screen { display: none; text-align: center; padding: 20px 0; animation: fadeIn 0.4s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  .result-icon {
-    width: 72px; height: 72px; margin: 0 auto 24px;
-    border-radius: 50%; display: flex; align-items: center;
-    justify-content: center; font-size: 32px;
-  }
-  .result-icon.success { background: #E8F5EC; }
-  .result-icon.redirect { background: #FFF3E0; }
-  .result-title { font-family: "Bai Jamjuree", sans-serif; font-size: 28px; color: #fff; margin-bottom: 10px; }
-  .result-desc { color: #fff; font-size: 14px; line-height: 1.7; margin-bottom: 24px; }
-
-  /* Discount Box */
-  .discount-box {
-    background: #c3eb3a;
-    border: 2px dashed #c3eb3a; border-radius: 14px;
-    padding: 20px 28px; margin: 20px 0;
-  }
-  .discount-label { font-size: 11px; font-weight: 500; color: #363636; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-  .discount-code { font-family: "Bai Jamjuree", sans-serif; font-size: 30px; color:#000; font-weight: 600; letter-spacing: 4px; margin-bottom: 6px; }
-  .discount-info { font-size: 13px; color: #363636; }
-  .copy-btn {
-    background: var(--gold); color: white; border: none;
-    padding: 10px 24px; border-radius: 8px;
-    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-    cursor: pointer; margin-top: 14px; transition: opacity 0.2s; letter-spacing: 0.5px;
-  }
-  .copy-btn:hover { opacity: 0.88; }
-
-  /* Amazon Button */
-  .amazon-btn {
-    display: inline-block;
-    background: linear-gradient(135deg, #FF9500 0%, #E07B00 100%);
-    color: white; text-decoration: none;
-    padding: 14px 32px; border-radius: 10px;
-    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
-    letter-spacing: 0.5px; transition: opacity 0.2s, transform 0.15s;
-  }
-  .amazon-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-
-  /* Error & Spinner */
-  .error-msg {
-    background: #FEF0EE; border: 1px solid #F5C0B8; color: var(--error);
-    padding: 12px 16px; border-radius: 8px; font-size: 13px;
-    margin-top: 12px; display: none;
-  }
-  .loading-spinner {
-    display: inline-block; width: 18px; height: 18px;
-    border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
-    border-radius: 50%; animation: spin 0.7s linear infinite;
-    margin-right: 8px; vertical-align: middle;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Loading dots for discount creation */
-  .creating-msg { color: var(--muted); font-size: 13px; margin-top: 8px; display: none; }
-  table { border-collapse: collapse; width: 100%; }
-  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-  th { background-color: #f4f4f4; }
-  tr:nth-child(even) { background-color: #fafafa; }
-  a { display: inline-block; margin-top: 10px; text-decoration: none; color: #007bff; }
+}
 </style>
 </head>
+
 <body>
 
 <div class="container">
 
-  <!-- ── Form Screen ─────────────────────────────── -->
+  <!-- FORM -->
   <div id="form-screen">
+
     <div class="header">
-      <h1>Share Your Experience</h1>
-      <p>We'd love to hear your honest feedback.<br>Your review means the world to us.</p>
+      <h1>Help Us Improve</h1>
+      <p>Let us hear and make the product to your liking!</p>
     </div>
 
     <div class="stars-section">
-      <div class="stars-label">Your Rating</div>
+      <div class="stars-label">Rate your experience</div>
+
       <div class="stars-row">
         <button class="star-btn" onclick="selectStar(1)" onmouseover="hoverStar(1)" onmouseout="unhoverStar()">
-          <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+          <svg class="star-icon" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+          </svg>
         </button>
+
         <button class="star-btn" onclick="selectStar(2)" onmouseover="hoverStar(2)" onmouseout="unhoverStar()">
-          <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+          <svg class="star-icon" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+          </svg>
         </button>
+
         <button class="star-btn" onclick="selectStar(3)" onmouseover="hoverStar(3)" onmouseout="unhoverStar()">
-          <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+          <svg class="star-icon" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+          </svg>
         </button>
+
         <button class="star-btn" onclick="selectStar(4)" onmouseover="hoverStar(4)" onmouseout="unhoverStar()">
-          <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+          <svg class="star-icon" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+          </svg>
         </button>
+
         <button class="star-btn" onclick="selectStar(5)" onmouseover="hoverStar(5)" onmouseout="unhoverStar()">
-          <svg class="star-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+          <svg class="star-icon" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5-4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/>
+          </svg>
         </button>
       </div>
+
       <div class="star-hint" id="star-hint">Tap a star to rate</div>
     </div>
 
     <div class="form-group">
       <label>Your Name</label>
-      <input type="text" id="inp-name" placeholder="e.g. John Doe" />
+      <input type="text" id="inp-name" placeholder="e.g. John Doe">
     </div>
+
     <div class="form-group">
       <label>Email Address</label>
-      <input type="email" id="inp-email" placeholder="user@example.com" />
+      <input type="email" id="inp-email" placeholder="user@example.com">
     </div>
+
     <div class="form-group">
       <label>Phone Number</label>
-      <input type="tel" id="inp-phone" placeholder="123-456-7890" />
-    </div>
-    <div class="form-group">
-  <label>Platform</label>
-  <select id="inp-platform" onchange="updateOrderField()">
-    <option value="">Select Platform</option>
-    <option value="amazon">Amazon</option>
-    <option value="shopify">Shopify</option>
-  </select>
-</div>
-
-<div class="form-group">
-  <label>Order Number</label>
-  <input 
-    type="text" 
-    id="inp-order" 
-    placeholder="Select a platform first" 
-  />
-</div>
-    <div class="form-group">
-      <label>Your Review</label>
-      <textarea id="inp-review" placeholder="Tell us about your experience with our product..."></textarea>
+      <input type="tel" id="inp-phone" placeholder="123-456-7890">
     </div>
 
-    <button class="submit-btn" id="submit-btn" onclick="submitReview()">Submit Review</button>
-    <div class="creating-msg" id="creating-msg">⏳ Your discount code is being generated…</div>
+    <div class="form-group">
+      <label>Ordered From?</label>
+      <select id="inp-platform" onchange="updateOrderField()">
+        <option value="">Select platform</option>
+        <option value="amazon">Amazon</option>
+        <option value="shopify">Webstore</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Order Number</label>
+      <input
+        type="text"
+        id="inp-order"
+        placeholder="Select a platform first"
+      >
+    </div>
+
+    <div class="form-group">
+      <label>Your Preferences</label>
+      <textarea
+        id="inp-review"
+        placeholder="Tell us about your preferences and what you would like us to improve..."
+      ></textarea>
+    </div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitReview()">
+      Submit
+    </button>
+
+    <div class="creating-msg" id="creating-msg">
+      ⏳ Your discount code is being generated…
+    </div>
+
     <div class="error-msg" id="error-msg"></div>
   </div>
 
-  <!-- ── Discount Screen (3 stars) ──────────────── -->
-  <div class="result-screen" id="discount-screen">
-    <div class="result-icon success">🎁</div>
-    <div class="result-title">Thank You!</div>
-    <div class="result-desc">We truly appreciate your feedback.<br>Here's an exclusive discount just for you:</div>
-    <div class="discount-box">
+  <!-- POSITIVE RESULT -->
+  <div class="result-screen" id="positive-screen">
+
+    <div class="result-icon redirect">✓</div>
+
+    <div class="result-title">Noted!</div>
+
+    <div class="result-desc">
+      Thank you for helping us improve. We will make sure to improve
+      the product by making it more to your liking.
+      <br><br>
+      In the meantime, we would like to appreciate your time with a gift:
+    </div>
+
+    <div class="timer-wrap" id="positive-timer-wrap">
+      <div class="timer-circle">
+        <span class="timer-number" id="positive-timer">10</span>
+      </div>
+      <div class="timer-text">
+        Your coupon code will be revealed in <strong>10 seconds</strong>.
+      </div>
+    </div>
+
+    <div class="discount-box hidden" id="positive-discount-box">
       <div class="discount-label">Your Discount Code</div>
-      <div class="discount-code" id="discount-code-display">—</div>
-      <div class="discount-info">10% OFF &mdash; One time use only &middot; Valid 30 days</div>
-      <!-- <button class="copy-btn" onclick="copyCode()">Copy Code</button> -->
+      <div class="discount-code" id="positive-code">—</div>
+      <div class="discount-info" id="positive-discount-info"></div>
     </div>
-    <div class="result-desc" style="margin-top:16px;font-size:13px;">
-      Apply this code at checkout.<br>Valid for your next order.
-    </div>
-  </div>
 
-  <!-- ── Amazon Screen (4-5 stars) ─────────────── -->
-  <div class="result-screen" id="amazon-screen">
-    <div class="result-icon redirect">⭐</div>
-    <div class="result-title">You're Amazing!</div>
-    <div class="result-desc">
-      We're so glad you loved your experience!<br>
-      Would you mind sharing your review on Amazon too?<br>
-      It helps us reach more customers like you.
+    <div class="result-desc hidden" id="positive-claim-text" style="margin-top:16px;font-size:13px;">
+      Claim this code on your next purchase as a token of appreciation.
     </div>
-    <a class="amazon-btn" id="amazon-link" href="#" target="_blank">
-      ✍️ Write Amazon Review
+
+    <a
+      class="review-btn hidden"
+      id="review-link"
+      href="#"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Endorse Us
     </a>
-    <div class="result-desc" style="margin-top:20px;font-size:12px;">
-      Opens in a new tab — takes less than 2 minutes!
-    </div>
+
   </div>
 
-  <!-- ── Low Rating Screen (1-2 stars) ─────────── -->
-  <div class="result-screen" id="low-screen">
+  <!-- NEGATIVE RESULT -->
+  <div class="result-screen" id="negative-screen">
+
     <div class="result-icon success">🙏</div>
-    <div class="result-title">Thank You!</div>
+
+    <div class="result-title">OhOh</div>
+
     <div class="result-desc">
-      We appreciate your honest feedback.<br>
-      We'll work hard to improve your experience.
+      We appreciate your feedback and will be working towards making
+      changes to your liking.
+      <br><br>
+      For your inconvenience, we would like to offer a discount on your
+      next purchase in hopes of you liking your next purchase.
     </div>
+
+    <div class="timer-wrap" id="negative-timer-wrap">
+      <div class="timer-circle">
+        <span class="timer-number" id="negative-timer">10</span>
+      </div>
+      <div class="timer-text">
+        Your coupon code will be revealed in <strong>10 seconds</strong>.
+      </div>
+    </div>
+
+    <div class="discount-box hidden" id="negative-discount-box">
+      <div class="discount-label">Your Discount Code</div>
+      <div class="discount-code" id="negative-code">—</div>
+      <div class="discount-info" id="negative-discount-info"></div>
+    </div>
+
+    <div class="result-desc hidden" id="negative-claim-text" style="margin-top:16px;font-size:13px;">
+      We will make sure to improve the product for you. Be advised that
+      it can take time for us to make the changes based on combined responses.
+    </div>
+
   </div>
 
 </div>
 
 <script>
-  // ── Amazon URL (server se match karo) ─────────────────────────────────────
-  // Ye URL aapka Amazon review page hai — server ki .env se match karna chahiye
-  const AMAZON_URL = 'https://www.amazon.com/review/create-review?asin=XXXXXXXXXX';
-
-  // ── Stars Logic ────────────────────────────────────────────────────────────
   let selectedStar = 0;
-  const hints = ['','Poor experience','Below average','Good — but could be better!','Great experience!','Excellent — loved it!'];
+
+  const hints = [
+    '',
+    'Poor experience',
+    'Below average',
+    'Good — but could be better!',
+    'Great experience!',
+    'Excellent — loved it!'
+  ];
 
   function hoverStar(val) {
-    document.querySelectorAll('.star-btn').forEach((b, i) => b.classList.toggle('hovered', i < val));
-    document.getElementById('star-hint').textContent = hints[val];
-  }
-  function unhoverStar() {
-    document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('hovered'));
-    document.getElementById('star-hint').textContent = selectedStar ? hints[selectedStar] : 'Tap a star to rate';
-  }
-  function selectStar(val) {
-    selectedStar = val;
-    document.querySelectorAll('.star-btn').forEach((b, i) => b.classList.toggle('active', i < val));
+    document
+      .querySelectorAll('.star-btn')
+      .forEach((b, i) => b.classList.toggle('hovered', i < val));
+
     document.getElementById('star-hint').textContent = hints[val];
   }
 
-  // ── Helpers ────────────────────────────────────────────────────────────────
+  function unhoverStar() {
+    document
+      .querySelectorAll('.star-btn')
+      .forEach(b => b.classList.remove('hovered'));
+
+    document.getElementById('star-hint').textContent =
+      selectedStar
+        ? hints[selectedStar]
+        : 'Tap a star to rate';
+  }
+
+  function selectStar(val) {
+    selectedStar = val;
+
+    document
+      .querySelectorAll('.star-btn')
+      .forEach((b, i) => b.classList.toggle('active', i < val));
+
+    document.getElementById('star-hint').textContent = hints[val];
+  }
+
   function showError(msg) {
     const el = document.getElementById('error-msg');
-    el.textContent = msg; el.style.display = 'block';
+    el.textContent = msg;
+    el.style.display = 'block';
   }
-  function hideError() { document.getElementById('error-msg').style.display = 'none'; }
+
+  function hideError() {
+    document.getElementById('error-msg').style.display = 'none';
+  }
 
   function showScreen(id) {
     document.getElementById('form-screen').style.display = 'none';
     document.getElementById(id).style.display = 'block';
   }
 
-  function copyCode() {
-  const codeEl = document.getElementById('discount-code-display');
-  const code = codeEl.textContent.trim();
-
-  if (!code || code === '—') {
-    alert('No discount code to copy yet!');
-    return;
-  }
-
-  navigator.clipboard.writeText(code)
-    .then(() => {
-      const btn = document.querySelector('.copy-btn');
-      btn.textContent = '✓ Copied!';
-      setTimeout(() => { btn.textContent = 'Copy Code'; }, 2000);
-    })
-    .catch(err => {
-      console.error('Copy failed:', err);
-      alert('Failed to copy code. Try manually.');
-    });
-}
-
-  // ── Main Submit ────────────────────────────────────────────────────────────
- async function submitReview() {
-  hideError();
-
-  const name = document.getElementById('inp-name').value.trim();
-  const email = document.getElementById('inp-email').value.trim();
-  const phone = document.getElementById('inp-phone').value.trim();
-  const review = document.getElementById('inp-review').value.trim();
-
-  const platform = document.getElementById('inp-platform').value;
-  const order = document.getElementById('inp-order').value.trim();
-
-  if (!platform) {
-    return showError('Please select a platform.');
-  }
-
-  if (!order) {
-    return showError('Please enter your order number.');
-  }
-
-  // Amazon order validation
-  if (platform === 'amazon') {
-
-    const amazonOrderRegex = /^\d{3}-\d{7}-\d{7}$|^\d{10,20}$/;
-
-    if (!amazonOrderRegex.test(order)) {
-      return showError(
-        'Please enter a valid Amazon order number (e.g. 123-1234567-1234567)'
-      );
-    }
-  }
-
-  // Shopify order validation
-  if (platform === 'shopify') {
-
-    const shopifyOrderRegex = /^#?\d{1,10}$/;
-
-    if (!shopifyOrderRegex.test(order)) {
-      return showError(
-        'Please enter a valid Shopify order number (e.g. #1001 or 1001)'
-      );
-    }
-  }
-
-  if (!name) {
-    return showError('Please enter your name.');
-  }
-
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return showError('Please enter a valid email address.');
-  }
-
-  if (!phone) {
-    return showError('Please enter your phone number.');
-  }
-
-  if (!selectedStar) {
-    return showError('Please select a star rating.');
-  }
-
-  if (!review) {
-    return showError('Please write a short review.');
-  }
-
-  const btn = document.getElementById('submit-btn');
-
-  btn.disabled = true;
-  btn.innerHTML =
-    '<span class="loading-spinner"></span>Submitting...';
-
-  if (selectedStar >= 4) {
-    document.getElementById('amazon-link').href = AMAZON_URL;
-
-    showScreen('amazon-screen');
-
-    setTimeout(() => {
-      window.open(AMAZON_URL, '_blank');
-    }, 1500);
-
-    return;
-  }
-
-  document.getElementById('creating-msg').style.display = 'block';
-
-  try {
-
-    const res = await fetch('/api/create-discount', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-
-      body: JSON.stringify({
-        name,
-        email,
-        phone,
-        platform,
-        order,
-        review,
-        stars: selectedStar
-      })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || 'Server error');
-    }
-
-    document.getElementById(
-      'discount-code-display'
-    ).textContent = data.code;
-
-    const sound = document.getElementById('success-sound');
-
-    if (sound) {
-      sound.currentTime = 0;
-
-      sound.play().catch(() => {
-        console.log(
-          "Autoplay blocked (user interaction required)"
-        );
-      });
-    }
-
-    showScreen('discount-screen');
-
-  } catch (err) {
-
-    btn.disabled = false;
-    btn.textContent = 'Submit Review';
-
-    document.getElementById(
-      'creating-msg'
-    ).style.display = 'none';
-
-    showError(
-      '❌ ' +
-      (err.message ||
-        'Something went wrong. Please try again.')
-    );
-  }
-}
   function updateOrderField() {
-  const platform = document.getElementById('inp-platform').value;
-  const orderInput = document.getElementById('inp-order');
+    const platform =
+      document.getElementById('inp-platform').value;
 
-  orderInput.value = '';
+    const orderInput =
+      document.getElementById('inp-order');
 
-  if (platform === 'amazon') {
-    orderInput.placeholder = 'e.g. 123-1234567-1234567';
-  } 
-  else if (platform === 'shopify') {
-    orderInput.placeholder = 'e.g. #1001 or 1001';
-  } 
-  else {
-    orderInput.placeholder = 'Select a platform first';
+    orderInput.value = '';
+
+    if (platform === 'amazon') {
+      orderInput.placeholder =
+        'e.g. 123-1234567-1234567';
+    } else if (platform === 'shopify') {
+      orderInput.placeholder =
+        'e.g. #1001 or 1001';
+    } else {
+      orderInput.placeholder =
+        'Select a platform first';
+    }
   }
-}
+
+  function startRevealTimer({
+    timerId,
+    timerWrapId,
+    discountBoxId,
+    claimTextId,
+    codeId,
+    discountInfoId,
+    code,
+    discountPercent,
+    reviewUrl,
+    reviewButtonId
+  }) {
+    let remaining = 10;
+
+    const timerEl =
+      document.getElementById(timerId);
+
+    const timerWrap =
+      document.getElementById(timerWrapId);
+
+    const discountBox =
+      document.getElementById(discountBoxId);
+
+    const claimText =
+      document.getElementById(claimTextId);
+
+    const codeEl =
+      document.getElementById(codeId);
+
+    const discountInfo =
+      document.getElementById(discountInfoId);
+
+    const reviewButton = reviewButtonId
+      ? document.getElementById(reviewButtonId)
+      : null;
+
+    timerEl.textContent = remaining;
+
+    const interval = setInterval(() => {
+      remaining -= 1;
+
+      timerEl.textContent = remaining;
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+
+        timerWrap.classList.add('hidden');
+
+        codeEl.textContent = code;
+
+        discountInfo.textContent =
+          `${discountPercent}% OFF — One time use only · Valid 30 days`;
+
+        discountBox.classList.remove('hidden');
+        claimText.classList.remove('hidden');
+
+        if (reviewButton && reviewUrl) {
+          reviewButton.href = reviewUrl;
+          reviewButton.classList.remove('hidden');
+        }
+      }
+    }, 1000);
+  }
+
+  async function submitReview() {
+    hideError();
+
+    const name =
+      document.getElementById('inp-name').value.trim();
+
+    const email =
+      document.getElementById('inp-email').value.trim();
+
+    const phone =
+      document.getElementById('inp-phone').value.trim();
+
+    const review =
+      document.getElementById('inp-review').value.trim();
+
+    const platform =
+      document.getElementById('inp-platform').value;
+
+    const order =
+      document.getElementById('inp-order').value.trim();
+
+    if (!platform) {
+      return showError('Please select where you ordered from.');
+    }
+
+    if (!order) {
+      return showError('Please enter your order number.');
+    }
+
+    if (platform === 'amazon') {
+      const amazonOrderRegex =
+        /^\d{3}-\d{7}-\d{7}$|^\d{10,20}$/;
+
+      if (!amazonOrderRegex.test(order)) {
+        return showError(
+          'Please enter a valid Amazon order number (e.g. 123-1234567-1234567)'
+        );
+      }
+    }
+
+    if (platform === 'shopify') {
+      const shopifyOrderRegex =
+        /^#?\d{1,10}$/;
+
+      if (!shopifyOrderRegex.test(order)) {
+        return showError(
+          'Please enter a valid Webstore order number (e.g. #1001 or 1001)'
+        );
+      }
+    }
+
+    if (!name) {
+      return showError('Please enter your name.');
+    }
+
+    if (
+      !email ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ) {
+      return showError('Please enter a valid email address.');
+    }
+
+    if (!phone) {
+      return showError('Please enter your phone number.');
+    }
+
+    if (!selectedStar) {
+      return showError('Please select a star rating.');
+    }
+
+    if (!review) {
+      return showError('Please tell us about your preferences.');
+    }
+
+    const btn =
+      document.getElementById('submit-btn');
+
+    btn.disabled = true;
+
+    btn.innerHTML =
+      '<span class="loading-spinner"></span>Submitting...';
+
+    document.getElementById('creating-msg').style.display =
+      'block';
+
+    try {
+      const res = await fetch(
+        '/api/create-discount',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            phone,
+            platform,
+            order,
+            review,
+            stars: selectedStar
+          })
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(
+          data.error || 'Server error'
+        );
+      }
+
+      if (data.positive) {
+        showScreen('positive-screen');
+
+        startRevealTimer({
+          timerId: 'positive-timer',
+          timerWrapId: 'positive-timer-wrap',
+          discountBoxId: 'positive-discount-box',
+          claimTextId: 'positive-claim-text',
+          codeId: 'positive-code',
+          discountInfoId: 'positive-discount-info',
+          code: data.code,
+          discountPercent: data.discountPercent,
+          reviewUrl: data.reviewUrl,
+          reviewButtonId: 'review-link'
+        });
+
+        // Open the review page immediately in a new tab
+        // so the customer can visit it during the 10-second timer.
+        if (data.reviewUrl) {
+          const reviewWindow =
+            window.open(
+              data.reviewUrl,
+              '_blank',
+              'noopener,noreferrer'
+            );
+
+          // If the browser blocks the automatic tab,
+          // the Endorse Us button will still appear
+          // after the timer.
+          if (!reviewWindow) {
+            console.log(
+              'Review tab was blocked by the browser.'
+            );
+          }
+        }
+
+      } else {
+        showScreen('negative-screen');
+
+        startRevealTimer({
+          timerId: 'negative-timer',
+          timerWrapId: 'negative-timer-wrap',
+          discountBoxId: 'negative-discount-box',
+          claimTextId: 'negative-claim-text',
+          codeId: 'negative-code',
+          discountInfoId: 'negative-discount-info',
+          code: data.code,
+          discountPercent: data.discountPercent,
+          reviewUrl: null,
+          reviewButtonId: null
+        });
+      }
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Submit';
+
+      document.getElementById(
+        'creating-msg'
+      ).style.display = 'none';
+
+      showError(
+        '❌ ' +
+        (
+          err.message ||
+          'Something went wrong. Please try again.'
+        )
+      );
+    }
+  }
 </script>
-<audio id="success-sound" src="sound.mp3" preload="auto"></audio>
+
 </body>
 </html>
