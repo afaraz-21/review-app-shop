@@ -60,13 +60,8 @@ const SHOPIFY_TOKEN = process.env.SHOPIFY_TOKEN;
 
 let PRICE_RULE_ID = process.env.PRICE_RULE_ID || null;
 
-const HIGH_DISCOUNT_PERCENT = parseInt(
-  process.env.HIGH_DISCOUNT_PERCENT || '10',
-  10
-);
-
-const LOW_DISCOUNT_PERCENT = parseInt(
-  process.env.LOW_DISCOUNT_PERCENT || '5',
+const DISCOUNT_PERCENT = parseInt(
+  process.env.DISCOUNT_PERCENT || '10',
   10
 );
 
@@ -303,9 +298,7 @@ app.post('/api/create-discount', async (req, res) => {
     // Lower than 4 = lower discount.
     const isPositive = numericStars >= 4;
 
-    const discountPercent = isPositive
-      ? HIGH_DISCOUNT_PERCENT
-      : LOW_DISCOUNT_PERCENT;
+    const discountPercent = DISCOUNT_PERCENT;
 
     // 5. Generate discount
     const code = generateCode();
@@ -377,8 +370,7 @@ app.post('/api/create-discount', async (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    high_discount: `${HIGH_DISCOUNT_PERCENT}%`,
-    low_discount: `${LOW_DISCOUNT_PERCENT}%`
+    discount: `${DISCOUNT_PERCENT}%`
   });
 });
 
