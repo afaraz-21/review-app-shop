@@ -330,7 +330,6 @@ app.post('/api/create-discount', async (req, res) => {
             email,
             platform === 'shopify' ? 'Webstore' : 'Amazon',
             order,
-            numericStars,
             code,
             new Date().toISOString()
           ]]
