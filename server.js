@@ -226,12 +226,14 @@ app.post('/api/create-discount', async (req, res) => {
     });
   }
 
+  // 2. Platform validation
   if (!['amazon', 'shopify'].includes(platform)) {
     return res.status(400).json({
       error: 'Invalid platform'
     });
   }
 
+  // 3. Star rating validation
   const numericStars = Number(stars);
 
   if (
@@ -244,7 +246,7 @@ app.post('/api/create-discount', async (req, res) => {
     });
   }
 
-  // Amazon order validation
+  // 4. Amazon order validation
   if (platform === 'amazon') {
     const amazonOrderRegex =
       /^\d{3}-\d{7}-\d{7}$|^\d{10,20}$/;
@@ -256,7 +258,7 @@ app.post('/api/create-discount', async (req, res) => {
     }
   }
 
-  // Webstore / Shopify order validation
+  // 5. Webstore / Shopify order validation
   if (platform === 'shopify') {
     const shopifyOrderRegex = /^#?\d{1,10}$/;
 
@@ -269,10 +271,11 @@ app.post('/api/create-discount', async (req, res) => {
 
   const emails = getEmails();
 
-  // 2. Email duplicate check
+  // 6. Email duplicate check
   if (
     emails.some(
-      e => String(e.email).toLowerCase() === email.toLowerCase()
+      e =>
+        String(e.email).toLowerCase() === email.toLowerCase()
     )
   ) {
     return res.status(400).json({
@@ -280,7 +283,7 @@ app.post('/api/create-discount', async (req, res) => {
     });
   }
 
-  // 3. Order duplicate check
+  // 7. Order duplicate check
   if (
     emails.some(
       e =>
@@ -294,21 +297,36 @@ app.post('/api/create-discount', async (req, res) => {
   }
 
   try {
-    // 4. High rating = higher discount.
-    // Lower than 4 = lower discount.
+    // 8. Determine discount based on star rating
+    //
+    // Less than 4 stars = 10%
+    // 4+ stars = 15%
     const isPositive = numericStars >= 4;
+    const discountPercent = isPositive ? 15 : 10;
 
-    const discountPercent = DISCOUNT_PERCENT;
+    // 9. Generate discount code
+    let code;
 
-    // 5. Generate discount
-    const code = generateCode();
+    if (platform === 'amazon') {
+      // Amazon uses fixed discount tokens
+      //
+      // 4+ stars = 15%
+      // Less than 4 stars = 10%
+      code = isPositive
+        ? 'AMZHIRV1S'
+        : 'AMZLORV1O';
+    } else {
+      // Shopify/Webstore keeps the existing
+      // dynamically generated discount code system
+      code = generateCode();
 
-    await createShopifyDiscount(
-      code,
-      discountPercent
-    );
+      await createShopifyDiscount(
+        code,
+        discountPercent
+      );
+    }
 
-    // 6. Save data
+    // 10. Save data
     saveEmail(
       email,
       code,
@@ -318,7 +336,7 @@ app.post('/api/create-discount', async (req, res) => {
       numericStars
     );
 
-    // 7. Save to Google Sheets
+    // 11. Save to Google Sheets
     if (SPREADSHEET_ID && sheetsCredentials) {
       await sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
@@ -337,8 +355,8 @@ app.post('/api/create-discount', async (req, res) => {
       });
     }
 
-    // 8. Return the correct review URL.
-    // Only positive ratings receive the external review-page URL.
+    // 12. Return the correct review URL
+    // Only 4+ star ratings receive the external review URL.
     let reviewUrl = null;
 
     if (isPositive) {
@@ -348,6 +366,7 @@ app.post('/api/create-discount', async (req, res) => {
           : SHOPIFY_REVIEW_URL;
     }
 
+    // 13. Return response
     return res.json({
       success: true,
       code,
@@ -364,6 +383,7 @@ app.post('/api/create-discount', async (req, res) => {
     });
   }
 });
+
 
 // ─── Health Check ──────────────────────────────────
 app.get('/api/health', (req, res) => {
